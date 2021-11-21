@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PasswordKeeper.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,16 +17,16 @@ namespace PasswordKeeper.Core.Utility
         private const string UpperL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         private const string Symb = "-_";
 
-        public string Generate(int passwordLength, PasswordType passwordType)
+        public string Generate(int passwordLength, PasswordTypeModel passwordType)
         {
             string password = "";
 
             var symbolsQueue = new List<char>();
             var symbolsPool = new List<string>() { LowerL };
 
-            TryAddSymbolType(passwordType.IsNumberRequired, symbolsPool, symbolsQueue);
-            TryAddSymbolType(passwordType.IsUpperRequired, symbolsPool, symbolsQueue);
-            TryAddSymbolType(passwordType.IsSymbolRequired, symbolsPool, symbolsQueue);
+            TryAddSymbolType(passwordType.IsNumberRequired, symbolsPool, Nums, symbolsQueue);
+            TryAddSymbolType(passwordType.IsUpperRequired, symbolsPool, UpperL, symbolsQueue);
+            TryAddSymbolType(passwordType.IsSymbolRequired, symbolsPool, Symb, symbolsQueue);
 
             symbolsQueue.Add(LowerL[_rand.Next(0, LowerL.Length)]);
 
@@ -48,12 +49,12 @@ namespace PasswordKeeper.Core.Utility
             return password;
         }
 
-        private void TryAddSymbolType(bool symbolTypeFlag, List<string> symbolsPool, List<char> symbolsQueue)
+        private void TryAddSymbolType(bool symbolTypeFlag, List<string> symbolsPool, string symbolsType, List<char> symbolsQueue)
         {
             if (symbolTypeFlag)
             {
-                symbolsQueue.Add(Nums[_rand.Next(0, Nums.Length)]);
-                symbolsPool.Add(Nums);
+                symbolsQueue.Add(symbolsType[_rand.Next(0, symbolsType.Length)]);
+                symbolsPool.Add(symbolsType);
             }
         }
     }

@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.ComponentModel;
-using PasswordKeeper.Core.Utility.Enum;
+using PasswordKeeper.Core.Utility.Enums;
 using PasswordKeeper.Core.Utility;
 
 namespace PasswordKeeper.Core
@@ -190,7 +190,23 @@ namespace PasswordKeeper.Core
                 }
             }
         }
-        
+
+        private void InfoBoxSearch(TextBox searchBox)
+        {
+            var searchBoxText = searchBox.Text.ToLower();
+
+            int counter = 0;
+            foreach (InfoBox infoBox in infoBoxes)
+            {
+                var infoBoxText = infoBox.nameTxtBox.Text.ToLower();
+                if (infoBoxText.Contains(searchBoxText))
+                {
+                    idxOfEnabled.Add(counter);
+                }
+                counter++;
+            }
+        }
+
         // ----- Обработчики событий ----- 
 
         // Обработчики событий строки поиска.
@@ -228,10 +244,10 @@ namespace PasswordKeeper.Core
                 return;
 
             // Приводим object-инициатор события к типу TextBox.
-            var txtBox = sender as TextBox;
+            var searchBox = sender as TextBox;
 
             // При пустом значении TextBox, показать все элементы.
-            if (txtBox.Text == "")
+            if (searchBox.Text == "")
             {
                 foreach (InfoBox box in infoBoxes)
                 {
@@ -247,61 +263,7 @@ namespace PasswordKeeper.Core
                 // Если было удалено или добавлено более нуля символов. Не уверен нужна ли эта проверка.
                 if(change.AddedLength > 0 || change.RemovedLength > 0)
                 {
-                    // Границы подмассива, который будет появляться при делении главного массива и
-                    // появляющихся в результате подмассивов.
-                    int left = 0;
-                    int right = infoBoxes.Count;
-
-                    // Индекс центрального элемента массива.
-                    int idx = left + (right - left) / 2;
-
-                    while (left != right)
-                    {
-                        // Сравниваем текст из центрального элемента массива с текстом в поисковой строке
-                        int compareValue = infoBoxes[idx].CompareTo(txtBox.Text);
-
-                        // Если центральный элемент начинается с искомой строки.
-                        if (compareValue == 0)
-                        {
-                            // Добавляем его в массив найденых подходящих элементов.
-                            idxOfEnabled.Add(idx);
-
-                            // Смотрим есть ли элементы начинающиеся с такой же строки слева и справа от элемента.
-                            // Так же добавляем их в массив найденых подходящих элементов.
-                            int nearIdx = idx;
-                            while (nearIdx > left && infoBoxes[nearIdx - 1].CompareTo(txtBox.Text) == 0)
-                            {
-                                nearIdx--;
-                                idxOfEnabled.Add(nearIdx);
-                            }
-
-                            nearIdx = idx;
-                            while (nearIdx < right - 1 && infoBoxes[nearIdx + 1].CompareTo(txtBox.Text) == 0)
-                            {
-                                nearIdx++;
-                                idxOfEnabled.Add(nearIdx);
-                            }
-
-                            // Т.к. искомые элементы найдены, искусственно создаем условие выхода из цикла.
-                            right = left;
-                        }
-                        else
-                        {
-                            // Вызывающий больше.
-                            if (compareValue > 0)
-                            {
-                                right = idx;
-                            }
-                            // Вызывающий меньше, т.к. на равенство уже проверили.
-                            else
-                            {
-                                left = idx + 1;
-                            }
-                        }
-
-                        // Вычисляем индекс среднего элемента нового подмассива.
-                        idx = left + (right - left) / 2;
-                    }
+                    InfoBoxSearch(searchBox);
                 }
             }
 

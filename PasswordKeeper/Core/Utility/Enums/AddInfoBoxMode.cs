@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PasswordKeeper.Core.Utility.Enum
+namespace PasswordKeeper.Core.Utility.Enums
 {
     public enum AddInfoBoxMode
     {

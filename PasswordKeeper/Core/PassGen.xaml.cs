@@ -1,4 +1,5 @@
 ﻿using PasswordKeeper.Core.Utility;
+using PasswordKeeper.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -43,7 +44,7 @@ namespace PasswordKeeper.Core
             bool isNum = isNumBox.IsChecked.HasValue ? isNumBox.IsChecked.Value : false;
             bool isUpper = isUpperBox.IsChecked.HasValue ? isUpperBox.IsChecked.Value : false;
             bool isSymbol = isSymbBox.IsChecked.HasValue ? isSymbBox.IsChecked.Value : false;
-            var passwordType = new PasswordType(isNum, isUpper, isSymbol);
+            var passwordType = new PasswordTypeModel(isNum, isUpper, isSymbol);
 
             string password = passwordGen.Generate(passwordLength, passwordType);
 
