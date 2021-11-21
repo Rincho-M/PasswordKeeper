@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.ComponentModel;
+using PasswordKeeper.Core.Utility.Enum;
+using PasswordKeeper.Core.Utility;
 
 namespace PasswordKeeper.Core
 {
@@ -89,7 +91,7 @@ namespace PasswordKeeper.Core
 
                 for (int i = 0; i < numOfBoxes; i++)
                 {
-                    AddInfoBox(new InfoBox(Resources, Application.Current.Resources, info[i]));
+                    AddInfoBox(new InfoBox(Resources, Application.Current.Resources, info[i]), AddInfoBoxMode.Existing);
                 }
             }
         }
@@ -145,7 +147,7 @@ namespace PasswordKeeper.Core
         }
 
         // Добавляет новый элемент на панель.
-        private void AddInfoBox(InfoBox iBox)
+        private void AddInfoBox(InfoBox iBox, AddInfoBoxMode mode)
         {
             //iBox.NameChange += InfoBox_NameChange;
             iBox.nameTxtBox.TextChanged += InfoBox_NameChanged;
@@ -153,8 +155,16 @@ namespace PasswordKeeper.Core
             iBox.loginTxtBox.TextChanged += InfoBox_DataChanged;
             iBox.passTxtBox.TextChanged += InfoBox_DataChanged;
 
-            infoPanel.Children.Add(iBox);
-            infoBoxes.Add(iBox);
+            int panelInsertIndex = 0;
+            int boxesInsertIndex = 0;
+            if (mode == AddInfoBoxMode.Existing)
+            {
+                panelInsertIndex = infoPanel.Children.Count;
+                boxesInsertIndex = infoBoxes.Count;
+            }
+
+            infoPanel.Children.Insert(panelInsertIndex, iBox);
+            infoBoxes.Insert(boxesInsertIndex, iBox);
         }
 
         // Записывает ошибки в лог файл.
@@ -218,7 +228,7 @@ namespace PasswordKeeper.Core
                 return;
 
             // Приводим object-инициатор события к типу TextBox.
-            TextBox txtBox = sender as TextBox;
+            var txtBox = sender as TextBox;
 
             // При пустом значении TextBox, показать все элементы.
             if (txtBox.Text == "")
@@ -232,10 +242,10 @@ namespace PasswordKeeper.Core
             }
 
             // Проходимся по коллекции изменений в TextBox.
-            foreach (TextChange txtCh in e.Changes)
+            foreach (TextChange change in e.Changes)
             {
                 // Если было удалено или добавлено более нуля символов. Не уверен нужна ли эта проверка.
-                if(txtCh.AddedLength > 0 || txtCh.RemovedLength > 0)
+                if(change.AddedLength > 0 || change.RemovedLength > 0)
                 {
                     // Границы подмассива, который будет появляться при делении главного массива и
                     // появляющихся в результате подмассивов.
@@ -313,7 +323,7 @@ namespace PasswordKeeper.Core
         private void AddBoxButton_Click(object sender, RoutedEventArgs e)
         {
             // Добавляем InfoBox.
-            AddInfoBox(new InfoBox(Resources, Application.Current.Resources));
+            AddInfoBox(new InfoBox(Resources, Application.Current.Resources), AddInfoBoxMode.New);
             // Так как с добавлением нового InfoBox`а данные больше не отсортированы
             // и не сохранены, устанавливаем значение переменных isSorted и isDataSaved равным false.
             isSorted = false;
