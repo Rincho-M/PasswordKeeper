@@ -335,9 +335,7 @@ namespace PasswordKeeper.Core
         // Реализация интерфейса IComparable.
         public int CompareTo(object obj)
         {
-            string thisText = nameTxtBox.Text.ToLower();
             string paramText = null;
-
             try
             {
                 if (obj is InfoBox)
@@ -359,6 +357,7 @@ namespace PasswordKeeper.Core
             }
 
             paramText = paramText.ToLower();
+            string thisText = nameTxtBox.Text.ToLower();
 
             return BaseCompareTo(thisText, paramText);
         }
